@@ -214,10 +214,8 @@ docker compose down
 
 ## Documentation
 
-- **Architecture Deep Dive**: `README_ARCHITECTURE.md` (HLD/LLD, sequence diagrams, trade-offs)
 - **API Testing**: `API_TESTING.md`
 - **Monitoring**: `infrastructure/MONITORING.md`
-- **Interview Guide**: `CLEANUP_SUMMARY.md`
 
 ---
 
