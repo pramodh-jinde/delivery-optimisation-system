@@ -1,0 +1,107 @@
+spring:
+  application:
+    name: routing-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/delivery_db}
+    username: ${SPRING_DATASOURCE_USERNAME:delivery_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:delivery_pass}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+    open-in-view: false
+  cache:
+    type: redis
+    cache-names: restaurants,executives,routes,orders
+    redis:
+      time-to-live: 300000
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:redis}
+      port: ${SPRING_REDIS_PORT:6379}
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+        shutdown-timeout: 200ms
+
+server:
+  port: 8082
+  compression:
+    enabled: true
+  http2:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  health:
+    redis:
+      enabled: false
+    defaults:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        hikaricp.connections.acquire: true
+        hikaricp.connections.usage: true
+        route.optimization.time: true
+        optimized.route.distance: true
+        optimized.route.time: true
+    tags:
+      application: ${spring.application.name}
+      service: routing-service
+
+routing:
+  optimization:
+    thread-pool-size: 20
+    max-batch-size: 10
+    exact-algorithm-threshold: 10
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      routingService:
+        sliding-window-size: 100
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60s
+        permitted-number-of-calls-in-half-open-state: 10
+        minimum-number-of-calls: 20
+  retry:
+    instances:
+      routingService:
+        max-attempts: 3
+        wait-duration: 1s
+        exponential-backoff-multiplier: 2
+
+logging:
+  level:
+    root: WARN
+    com.delivery: INFO
+    org.springframework.web: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
