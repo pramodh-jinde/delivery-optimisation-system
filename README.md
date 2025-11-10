@@ -9,7 +9,6 @@ Solves the Vehicle Routing Problem (VRP) for food delivery by finding optimal ro
 **Key Features:**
 - ✅ Sub-second route optimization (≤10 orders)
 - ✅ Dual algorithms: **Exact DP** (optimal) + **Christofides** (1.5-approximation)
-- ✅ Pickup-before-delivery constraint enforcement
 - ✅ Real-time monitoring with Prometheus + Grafana
 - ✅ Microservices architecture with Docker
 
@@ -92,10 +91,10 @@ Solves the Vehicle Routing Problem (VRP) for food delivery by finding optimal ro
   "steps": [
     {"sequence": 1, "type": "EXECUTIVE_START", "location": {...}},
     {"sequence": 2, "type": "RESTAURANT_PICKUP", "location": {...}, "distanceFromPreviousKm": 5.2},
-    {"sequence": 3, "type": "CUSTOMER_DELIVERY", "location": {...}, "distanceFromPreviousKm": 5.2}
+    {"sequence": 3, "type": "CUSTOMER_DELIVERY", "location": {...}, "distanceFromPreviousKm": 3.8}
   ],
-  "totalDistanceKm": 10.4,
-  "estimatedTimeMinutes": 31.2,
+  "totalDistanceKm": 9.0,
+  "estimatedTimeMinutes": 27.0,
   "metadata": {"algorithm": "EXACT_DP", "optimizationTimeMs": 45}
 }
 ```
@@ -107,7 +106,7 @@ Solves the Vehicle Routing Problem (VRP) for food delivery by finding optimal ro
 ## Algorithms
 
 ### 1. Exact DP (N ≤ 10)
-- **Algorithm**: Held-Karp with bitmask
+- **Algorithm**: Held-Karp with bitmask DP
 - **Complexity**: O(N² × 2^N)
 - **Quality**: Optimal solution guaranteed
 - **Speed**: <100ms
@@ -127,7 +126,7 @@ Both algorithms ensure **pickup-before-delivery**: Restaurant pickup must occur 
 
 After startup, access:
 
-- **Grafana Dashboards**: http://localhost:3000 (`admin`/`admin`)
+- **Grafana Dashboards**: http://localhost:3000 (username: `admin`, password: `admin`)
   - Order Service: Throughput, latency, DB/cache metrics
   - Routing Service: Optimization time, algorithm performance, route quality
 
@@ -216,6 +215,7 @@ docker compose down
 
 - **API Testing**: `API_TESTING.md`
 - **Monitoring**: `infrastructure/MONITORING.md`
+- **Grafana Setup**: `infrastructure/GRAFANA_QUICKSTART.md`
 
 ---
 
